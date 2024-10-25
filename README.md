@@ -1,4 +1,7 @@
-## Hi there 👋
+- 🌍 I am currently studying at a college in Russia
+- 🖥 How to contact me: kripqwer00@gmail.com 
+- 😄 Pronouns: he/her
+
 
 <!--
 **VanyaZcx/VanyaZcx** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.

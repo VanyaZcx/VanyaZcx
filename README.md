@@ -1,3 +1,7 @@
+## Hello! 👋
+
+Welcome to my GitHub profile!
+
 - 🌍 I am currently studying at a college in Russia
 - 🖥 How to contact me: kripqwer00@gmail.com 
 

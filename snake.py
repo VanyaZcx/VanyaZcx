@@ -25,6 +25,8 @@ WINDOW_HEIGHT = 600
 GRID_SIZE = 20
 GRID_WIDTH = WINDOW_WIDTH // GRID_SIZE
 GRID_HEIGHT = WINDOW_HEIGHT // GRID_SIZE
+GAME_FPS = 10  # Game speed in frames per second
+TEXT_GAME_SPEED = 0.1  # Seconds between updates in text mode
 
 # Colors
 BLACK = (0, 0, 0)
@@ -53,11 +55,16 @@ class SnakeGame:
         
     def place_food(self):
         """Place food at a random location not occupied by the snake"""
-        while True:
+        max_attempts = GRID_WIDTH * GRID_HEIGHT
+        attempts = 0
+        while attempts < max_attempts:
             food = (random.randint(0, GRID_WIDTH - 1), 
                    random.randint(0, GRID_HEIGHT - 1))
             if food not in self.snake:
                 return food
+            attempts += 1
+        # If grid is full (player won!), return None
+        return None
                 
     def update(self):
         """Update game state"""
@@ -87,13 +94,17 @@ class SnakeGame:
         if new_head == self.food:
             self.score += 1
             self.food = self.place_food()
+            # Check if player won (grid is full)
+            if self.food is None:
+                self.game_over = True  # Player wins!
         else:
             self.snake.pop()
             
     def change_direction(self, new_direction):
         """Change snake direction, preventing 180-degree turns"""
         # Prevent moving in opposite direction
-        if (new_direction[0] * -1, new_direction[1] * -1) != self.direction:
+        opposite_direction = (-self.direction[0], -self.direction[1])
+        if new_direction != opposite_direction:
             self.direction = new_direction
 
 
@@ -141,9 +152,10 @@ def run_pygame_version():
             pygame.draw.rect(screen, GREEN, rect)
         
         # Draw food
-        food_rect = pygame.Rect(game.food[0] * GRID_SIZE, game.food[1] * GRID_SIZE,
-                               GRID_SIZE - 1, GRID_SIZE - 1)
-        pygame.draw.rect(screen, RED, food_rect)
+        if game.food is not None:
+            food_rect = pygame.Rect(game.food[0] * GRID_SIZE, game.food[1] * GRID_SIZE,
+                                   GRID_SIZE - 1, GRID_SIZE - 1)
+            pygame.draw.rect(screen, RED, food_rect)
         
         # Draw score
         score_text = font.render(f"Score: {game.score}", True, WHITE)
@@ -156,7 +168,7 @@ def run_pygame_version():
             screen.blit(game_over_text, text_rect)
         
         pygame.display.flip()
-        clock.tick(10)  # 10 FPS
+        clock.tick(GAME_FPS)
     
     pygame.quit()
 
@@ -228,7 +240,7 @@ def run_text_version():
                         row += "O"  # Head
                     else:
                         row += "o"  # Body
-                elif (x, y) == game.food:
+                elif game.food is not None and (x, y) == game.food:
                     row += "*"
                 else:
                     row += " "
@@ -240,7 +252,7 @@ def run_text_version():
         if game.game_over:
             print("Game Over! Press SPACE to restart or Q to quit")
         
-        time.sleep(0.1)  # Control game speed
+        time.sleep(TEXT_GAME_SPEED)
     
     print("\nThanks for playing!")
 
